@@ -32,22 +32,43 @@ USE didi;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
+-- Listage de la structure de la base pour didi
+CREATE DATABASE IF NOT EXISTS `didi` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `didi`;
 
+-- Listage de la structure de table didi. t_appeler_tel
+CREATE TABLE IF NOT EXISTS `t_appeler_tel` (
+  `ID_appeler` int NOT NULL AUTO_INCREMENT,
+  `fk_client` int DEFAULT NULL,
+  `fk_tel` int DEFAULT NULL,
+  PRIMARY KEY (`ID_appeler`),
+  KEY `Index 2` (`fk_client`),
+  KEY `Index 3` (`fk_tel`),
+  CONSTRAINT `FK_t_appeler_tel_t_client` FOREIGN KEY (`fk_client`) REFERENCES `t_client` (`ID_Client`),
+  CONSTRAINT `FK_t_appeler_tel_t_tel` FOREIGN KEY (`fk_tel`) REFERENCES `t_tel` (`ID_tel`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table didi.t_appeler_tel : ~4 rows (environ)
+INSERT INTO `t_appeler_tel` (`ID_appeler`, `fk_client`, `fk_tel`) VALUES
+	(1, 2, 2),
+	(2, 1, 1),
+	(3, 3, 3),
+	(4, 4, 4);
 
 -- Listage de la structure de table didi. t_avoir_mail
 CREATE TABLE IF NOT EXISTS `t_avoir_mail` (
   `ID_Avoir` int NOT NULL,
-  `ID_Mail` int DEFAULT NULL,
-  `ID_CLient` int DEFAULT NULL,
+  `fk_Mail` int DEFAULT NULL,
+  `fk_Client` int DEFAULT NULL,
   PRIMARY KEY (`ID_Avoir`),
-  KEY `ID_Mail` (`ID_Mail`),
-  KEY `ID_CLient` (`ID_CLient`),
-  CONSTRAINT `t_avoir_mail_ibfk_1` FOREIGN KEY (`ID_Mail`) REFERENCES `t_mail` (`ID_Mail`),
-  CONSTRAINT `t_avoir_mail_ibfk_2` FOREIGN KEY (`ID_CLient`) REFERENCES `t_client` (`ID_Client`)
+  KEY `ID_Mail` (`fk_Mail`) USING BTREE,
+  KEY `ID_CLient` (`fk_Client`) USING BTREE,
+  CONSTRAINT `FK_t_avoir_mail_t_client` FOREIGN KEY (`fk_Client`) REFERENCES `t_client` (`ID_Client`),
+  CONSTRAINT `FK_t_avoir_mail_t_mail` FOREIGN KEY (`fk_Mail`) REFERENCES `t_mail` (`ID_Mail`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table didi.t_avoir_mail : ~4 rows (environ)
-INSERT INTO `t_avoir_mail` (`ID_Avoir`, `ID_Mail`, `ID_CLient`) VALUES
+INSERT INTO `t_avoir_mail` (`ID_Avoir`, `fk_Mail`, `fk_Client`) VALUES
 	(1, 1, 1),
 	(2, 1, 2),
 	(3, 1, 3),
@@ -58,33 +79,32 @@ CREATE TABLE IF NOT EXISTS `t_client` (
   `ID_Client` int NOT NULL AUTO_INCREMENT,
   `Nom` varchar(50) NOT NULL,
   `Prenom` varchar(50) NOT NULL,
-  `Telephone` int NOT NULL,
   `mot_de_passe` varchar(50) NOT NULL,
   PRIMARY KEY (`ID_Client`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table didi.t_client : ~4 rows (environ)
-INSERT INTO `t_client` (`ID_Client`, `Nom`, `Prenom`, `Telephone`, `mot_de_passe`) VALUES
-	(1, 'Dupont', 'Pierre', 45955452, 'fenfujneiknfej'),
-	(2, 'Durand', 'Sophie', 895968755, ' of,niebnfiei'),
-	(3, 'Lefebvre', 'Jean', 255415698, ' njbhvce,c,nn'),
-	(4, 'Martin', 'Marie', 945656657, ' fefenbjn,,ke');
+INSERT INTO `t_client` (`ID_Client`, `Nom`, `Prenom`, `mot_de_passe`) VALUES
+	(1, 'Dupont', 'Pierre', 'fenfujneiknfej'),
+	(2, 'Durand', 'Sophie', ' of,niebnfiei'),
+	(3, 'Lefebvre', 'Jean', ' njbhvce,c,nn'),
+	(4, 'Martin', 'Marie', ' fefenbjn,,ke');
 
 -- Listage de la structure de table didi. t_commande_passer
 CREATE TABLE IF NOT EXISTS `t_commande_passer` (
   `ID_Commande` int NOT NULL,
   `date_commande` date NOT NULL,
-  `ID_Client` int DEFAULT NULL,
-  `ID_Endroit` int DEFAULT NULL,
+  `fk_Client` int DEFAULT NULL,
+  `fk_Endroit` int DEFAULT NULL,
   PRIMARY KEY (`ID_Commande`),
-  KEY `ID_Client` (`ID_Client`),
-  KEY `ID_Endroit` (`ID_Endroit`),
-  CONSTRAINT `t_commande_passer_ibfk_1` FOREIGN KEY (`ID_Client`) REFERENCES `t_client` (`ID_Client`),
-  CONSTRAINT `t_commande_passer_ibfk_2` FOREIGN KEY (`ID_Endroit`) REFERENCES `t_endroit` (`ID_Endroit`)
+  KEY `ID_Client` (`fk_Client`) USING BTREE,
+  KEY `ID_Endroit` (`fk_Endroit`) USING BTREE,
+  CONSTRAINT `t_commande_passer_t_Client` FOREIGN KEY (`fk_Client`) REFERENCES `t_client` (`ID_Client`),
+  CONSTRAINT `t_commande_passer_t_commande` FOREIGN KEY (`fk_Endroit`) REFERENCES `t_endroit` (`ID_Endroit`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table didi.t_commande_passer : ~4 rows (environ)
-INSERT INTO `t_commande_passer` (`ID_Commande`, `date_commande`, `ID_Client`, `ID_Endroit`) VALUES
+INSERT INTO `t_commande_passer` (`ID_Commande`, `date_commande`, `fk_Client`, `fk_Endroit`) VALUES
 	(1, '2022-01-01', 1, 1),
 	(2, '2022-02-15', 3, 2),
 	(3, '2022-03-10', 2, 1),
@@ -122,18 +142,21 @@ CREATE TABLE IF NOT EXISTS `t_payer_commande` (
   `ID_Paiement` int NOT NULL,
   `date_paiement` date NOT NULL,
   `montant` decimal(10,2) NOT NULL,
-  `ID_Commande` int DEFAULT NULL,
+  `fk_Commande` int DEFAULT NULL,
+  `fk_Client` int DEFAULT NULL,
   PRIMARY KEY (`ID_Paiement`),
-  KEY `ID_Commande` (`ID_Commande`),
-  CONSTRAINT `t_payer_commande_ibfk_1` FOREIGN KEY (`ID_Commande`) REFERENCES `t_commande_passer` (`ID_Commande`)
+  KEY `ID_Commande` (`fk_Commande`) USING BTREE,
+  KEY `fk_Client` (`fk_Client`),
+  CONSTRAINT `FK_t_payer_commande_t_client` FOREIGN KEY (`fk_Client`) REFERENCES `t_client` (`ID_Client`),
+  CONSTRAINT `FK_t_payer_commande_t_commande_passer` FOREIGN KEY (`fk_Commande`) REFERENCES `t_commande_passer` (`ID_Commande`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table didi.t_payer_commande : ~4 rows (environ)
-INSERT INTO `t_payer_commande` (`ID_Paiement`, `date_paiement`, `montant`, `ID_Commande`) VALUES
-	(1, '2022-01-01', 20.00, 1),
-	(2, '2022-02-15', 15.00, 2),
-	(3, '2022-03-10', 8.50, 3),
-	(4, '2022-04-05', 12.75, 4);
+INSERT INTO `t_payer_commande` (`ID_Paiement`, `date_paiement`, `montant`, `fk_Commande`, `fk_Client`) VALUES
+	(1, '2022-01-01', 20.00, 1, 1),
+	(2, '2022-02-15', 15.00, 2, 2),
+	(3, '2022-03-10', 8.50, 3, 3),
+	(4, '2022-04-05', 12.75, 4, 4);
 
 -- Listage de la structure de table didi. t_produit
 CREATE TABLE IF NOT EXISTS `t_produit` (
@@ -154,16 +177,16 @@ INSERT INTO `t_produit` (`ID_Produit`, `Nom_Produit`, `desc_Produit`, `Prix_Prod
 
 -- Listage de la structure de table didi. t_stocker_produit
 CREATE TABLE IF NOT EXISTS `t_stocker_produit` (
-  `ID_Stock` int NOT NULL,
+  `ID_Stock` int NOT NULL AUTO_INCREMENT,
   `Quantite` int NOT NULL,
   `ID_Produit` int DEFAULT NULL,
   `ID_Endroit` int DEFAULT NULL,
   PRIMARY KEY (`ID_Stock`),
   KEY `ID_Produit` (`ID_Produit`),
   KEY `ID_Endroit` (`ID_Endroit`),
-  CONSTRAINT `t_stocker_produit_ibfk_1` FOREIGN KEY (`ID_Produit`) REFERENCES `t_produit` (`ID_Produit`),
-  CONSTRAINT `t_stocker_produit_ibfk_2` FOREIGN KEY (`ID_Endroit`) REFERENCES `t_endroit` (`ID_Endroit`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `FK_t_stocker_produit_t_endroit` FOREIGN KEY (`ID_Endroit`) REFERENCES `t_endroit` (`ID_Endroit`),
+  CONSTRAINT `FK_t_stocker_produit_t_produit` FOREIGN KEY (`ID_Produit`) REFERENCES `t_produit` (`ID_Produit`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Listage des données de la table didi.t_stocker_produit : ~5 rows (environ)
 INSERT INTO `t_stocker_produit` (`ID_Stock`, `Quantite`, `ID_Produit`, `ID_Endroit`) VALUES
@@ -172,6 +195,20 @@ INSERT INTO `t_stocker_produit` (`ID_Stock`, `Quantite`, `ID_Produit`, `ID_Endro
 	(3, 150, 3, 2),
 	(4, 200, 4, 2),
 	(5, 75, 5, 3);
+
+-- Listage de la structure de table didi. t_tel
+CREATE TABLE IF NOT EXISTS `t_tel` (
+  `ID_tel` int NOT NULL AUTO_INCREMENT,
+  `numero` float DEFAULT NULL,
+  PRIMARY KEY (`ID_tel`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table didi.t_tel : ~4 rows (environ)
+INSERT INTO `t_tel` (`ID_tel`, `numero`) VALUES
+	(1, 4521570),
+	(2, 980548000),
+	(3, 8789550000),
+	(4, 814848000);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

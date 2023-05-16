@@ -28,14 +28,14 @@ from APP_FILMS_164.genres.gestion_genres_wtf_forms import FormWTFUpdateGenre
 """
 
 
-@app.route("/genres_afficher/<string:order_by>/<int:id_genre_sel>", methods=['GET', 'POST'])
-def genres_afficher(order_by, id_genre_sel):
+@app.route("/contact_afficher/<string:order_by>/<int:id_genre_sel>", methods=['GET', 'POST'])
+def contact_afficher(order_by, id_genre_sel):
     if request.method == "GET":
         try:
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and id_genre_sel == 0:
                     strsql_genres_afficher = """SELECT * FROM t_client inner join t_commande_passer on t_client.ID_Client = t_commande_passer.ID_Commande"""
-                    mc_afficher.execute(strsql_genres_afficher)
+                    mc_afficher.execute(strsql_contact_afficher)
                 elif order_by == "ASC":
                     # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
                     # la commande MySql classique est "SELECT * FROM t_genre"
@@ -45,11 +45,11 @@ def genres_afficher(order_by, id_genre_sel):
                     valeur_id_genre_selected_dictionnaire = {"value_id_genre_selected": id_genre_sel}
                     strsql_genres_afficher = """SELECT *  FROM t_client WHERE ID_Client = %(value_id_genre_selected)s"""
 
-                    mc_afficher.execute(strsql_genres_afficher, valeur_id_genre_selected_dictionnaire)
+                    mc_afficher.execute(strsql_contact_afficher, valeur_id_genre_selected_dictionnaire)
                 else:
                     strsql_genres_afficher = """SELECT *  FROM t_client ORDER BY id_client DESC"""
 
-                    mc_afficher.execute(strsql_genres_afficher)
+                    mc_afficher.execute(strsql_contact_afficher)
 
                 data_genres = mc_afficher.fetchall()
 
@@ -66,13 +66,13 @@ def genres_afficher(order_by, id_genre_sel):
                     # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
                     flash(f"Données genres affichés !!", "success")
 
-        except Exception as Exception_genres_afficher:
+        except Exception as Exception_contact_afficher:
             raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
-                                          f"{genres_afficher.__name__} ; "
-                                          f"{Exception_genres_afficher}")
+                                          f"{contact_afficher.__name__} ; "
+                                          f"{Exception_contact_afficher}")
 
     # Envoie la page "HTML" au serveur.
-    return render_template("genres/genres_afficher.html", data=data_genres)
+    return render_template("contact/contact_afficher.html", data=data_genres)
 
 
 """
