@@ -28,26 +28,29 @@ from APP_FILMS_164.genres.gestion_genres_wtf_forms import FormWTFUpdateGenre
 """
 
 
-@app.route("/genres_afficher/<string:order_by>/<int:id_genre_sel>", methods=['GET', 'POST'])
-def genres_afficher(order_by, id_genre_sel):
+@app.route("/commande_afficher/<string:order_by>/<int:id_genre_sel>", methods=['GET', 'POST'])
+def commande_afficher(order_by, id_genre_sel):
     if request.method == "GET":
         try:
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and id_genre_sel == 0:
-                    strsql_genres_afficher = """SELECT * FROM t_client INNER JOIN t_tel ON t_client.ID_Client = t_tel.ID_tel 
-                                                                   INNER JOIN t_mail ON t_client.ID_Client = t_mail.ID_Mail"""
-                    mc_afficher.execute(strsql_genres_afficher)
-
-
+                    strsql_commande_afficher = """SELECT * FROM t_client inner join t_commande_passer on t_client.ID_Client = t_commande_passer.ID_Commande
+                                                                         inner join t_payer_commande on t_client.ID_Client = t_payer_commande.ID_Paiement"""
+                    mc_afficher.execute(strsql_commande_afficher)
                 elif order_by == "ASC":
+                    # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
+                    # la commande MySql classique est "SELECT * FROM t_genre"
+                    # Pour "lever"(raise) une erreur s'il y a des erreurs sur les noms d'attributs dans la table
+                    # donc, je précise les champs à afficher
+                    # Constitution d'un dictionnaire pour associer l'id du genre sélectionné avec un nom de variable
+                    valeur_id_genre_selected_dictionnaire = {"value_id_genre_selected": id_genre_sel}
+                    strsql_commande_afficher = """SELECT *  FROM t_client WHERE ID_Client = %(value_id_genre_selected)s"""
 
-                    strsql_genres_afficher = """SELECT * FROM t_client INNER JOIN t_mail ON t_client.ID_Client = t_mail.ID_Mail"""
-                    mc_afficher.execute(strsql_genres_afficher)
-
+                    mc_afficher.execute(strsql_commande_afficher, valeur_id_genre_selected_dictionnaire)
                 else:
-                    strsql_genres_afficher = """SELECT *  FROM t_client ORDER BY id_client DESC"""
+                    strsql_commande_afficher = """SELECT *  FROM t_client ORDER BY id_client DESC"""
 
-                    mc_afficher.execute(strsql_genres_afficher)
+                    mc_afficher.execute(strsql_commande_afficher)
 
                 data_genres = mc_afficher.fetchall()
 
@@ -64,13 +67,13 @@ def genres_afficher(order_by, id_genre_sel):
                     # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
                     flash(f"Données genres affichés !!", "success")
 
-        except Exception as Exception_genres_afficher:
+        except Exception as Exception_commande_afficher:
             raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
-                                          f"{genres_afficher.__name__} ; "
-                                          f"{Exception_genres_afficher}")
+                                          f"{commande_afficher.__name__} ; "
+                                          f"{Exception_commande_afficher}")
 
     # Envoie la page "HTML" au serveur.
-    return render_template("genres/genres_afficher.html", data=data_genres)
+    return render_template("commande/commande_afficher.html", data=data_genres)
 
 
 """
@@ -93,6 +96,35 @@ def genres_afficher(order_by, id_genre_sel):
 """
 
 
+@app.route("/commande_ajouter", methods=['GET', 'POST'])
+def commande_ajouter_wtf():
+    form = FormWTFAjouterGenres()
+    if request.method == "POST":
+        try:
+            if form.validate_on_submit():
+                name_genre_wtf = form.nom_genre_wtf.data
+                name_genre = name_genre_wtf.lower()
+                valeurs_insertion_dictionnaire = {"value_intitule_commande": name_genre}
+                print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
+
+                strsql_insert_genre = """INSERT INTO t_commande_passer (ID_Commande,date_commande) VALUES (%(value_intitule_commande)s) """
+                with DBconnection() as mconn_bd:
+                    mconn_bd.execute(strsql_insert_genre, valeurs_insertion_dictionnaire)
+
+                flash(f"Données insérées !!", "success")
+                print(f"Données insérées !!")
+
+                # Pour afficher et constater l'insertion de la valeur, on affiche en ordre inverse. (DESC)
+                return redirect(url_for('genres_afficher', order_by='DESC', id_genre_sel=0))
+
+        except Exception as Exception_genres_ajouter_wtf:
+            raise ExceptionGenresAjouterWtf(f"fichier : {Path(__file__).name}  ;  "
+                                            f"{commande_ajouter_wtf.__name__} ; "
+                                            f"{Exception_genres_ajouter_wtf}")
+
+    return render_template("commande/commande_ajouter_wtf.html", form=form)
+
+
 """
     Auteur : OM 2021.03.29
     Définition d'une "route" /genre_update
@@ -113,37 +145,8 @@ def genres_afficher(order_by, id_genre_sel):
 """
 
 
-@app.route("/genres_ajouter", methods=['GET', 'POST'])
-def genres_ajouter_wtf():
-    form = FormWTFAjouterGenres()
-    if request.method == "POST":
-        try:
-            if form.validate_on_submit():
-                name_genre_wtf = form.nom_genre_wtf.data
-                name_genre = name_genre_wtf.lower()
-                valeurs_insertion_dictionnaire = {"value_intitule_genre": name_genre}
-                print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
-
-                strsql_insert_genre = """INSERT INTO t_client (ID_Client,Nom,Prenom,mot_de_passe) VALUES (NULL,%(value_intitule_genre)s) """
-                with DBconnection() as mconn_bd:
-                    mconn_bd.execute(strsql_insert_genre, valeurs_insertion_dictionnaire)
-
-                flash(f"Données insérées !!", "success")
-                print(f"Données insérées !!")
-
-                # Pour afficher et constater l'insertion de la valeur, on affiche en ordre inverse. (DESC)
-                return redirect(url_for('genres_afficher', order_by='DESC', id_genre_sel=0))
-
-        except Exception as Exception_genres_ajouter_wtf:
-            raise ExceptionGenresAjouterWtf(f"fichier : {Path(__file__).name}  ;  "
-                                            f"{genres_ajouter_wtf.__name__} ; "
-                                            f"{Exception_genres_ajouter_wtf}")
-
-    return render_template("genres/genres_ajouter_wtf.html", form=form)
-
-
 @app.route("/genre_update", methods=['GET', 'POST'])
-def genre_update_wtf():
+def commande_update_wtf():
     # L'utilisateur vient de cliquer sur le bouton "EDIT". Récupère la valeur de "id_genre"
     id_genre_update = request.values['id_genre_btn_edit_html']
 
@@ -193,7 +196,7 @@ def genre_update_wtf():
 
     except Exception as Exception_genre_update_wtf:
         raise ExceptionGenreUpdateWtf(f"fichier : {Path(__file__).name}  ;  "
-                                      f"{genre_update_wtf.__name__} ; "
+                                      f"{commande_update_wtf.__name__} ; "
                                       f"{Exception_genre_update_wtf}")
 
     return render_template("genres/genre_update_wtf.html", form_update=form_update)
@@ -214,8 +217,8 @@ def genre_update_wtf():
 """
 
 
-@app.route("/genre_delete", methods=['GET', 'POST'])
-def genre_delete_wtf():
+@app.route("/commande_delete", methods=['GET', 'POST'])
+def commande_delete_wtf():
     data_films_attribue_genre_delete = None
     btn_submit_del = None
     # L'utilisateur vient de cliquer sur le bouton "DELETE". Récupère la valeur de "id_genre"
@@ -296,7 +299,7 @@ def genre_delete_wtf():
 
     except Exception as Exception_genre_delete_wtf:
         raise ExceptionGenreDeleteWtf(f"fichier : {Path(__file__).name}  ;  "
-                                      f"{genre_delete_wtf.__name__} ; "
+                                      f"{commande_delete_wtf.__name__} ; "
                                       f"{Exception_genre_delete_wtf}")
 
     return render_template("genres/genre_delete_wtf.html",

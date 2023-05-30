@@ -51,6 +51,22 @@ try:
     from APP_FILMS_164.films import gestion_films_crud
     from APP_FILMS_164.films import gestion_films_wtf_forms
 
+    from APP_FILMS_164.menu import gestion_menu_crud
+    from APP_FILMS_164.menu import gestion_menu_wtf_forms
+
+    from APP_FILMS_164.Stock import gestion_Stock_crud
+    from APP_FILMS_164.Stock import gestion_Stock_wtf_forms
+
+    from APP_FILMS_164.commande import gestion_commande_crud
+    from APP_FILMS_164.commande import gestion_commande_wtf_forms
+
+    from APP_FILMS_164.produit import gestion_produit_crud
+    from APP_FILMS_164.produit import gestion_produit_wtf_forms
+
+    from APP_FILMS_164.employer import gestion_employer_crud
+    from APP_FILMS_164.employer import gestion_employer_wtf_forms
+
+
 
 except Exception as Exception_init_app_films_164:
     print(f"4567756434 Une erreur est survenue {type(Exception_init_app_films_164)} dans"

@@ -22,6 +22,13 @@ USE didi;
 -- HeidiSQL Version:             12.1.0.6537
 -- --------------------------------------------------------
 
+-- --------------------------------------------------------
+-- Hôte:                         127.0.0.1
+-- Version du serveur:           8.0.32 - MySQL Community Server - GPL
+-- SE du serveur:                Win64
+-- HeidiSQL Version:             12.1.0.6537
+-- --------------------------------------------------------
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
@@ -110,6 +117,28 @@ INSERT INTO `t_commande_passer` (`ID_Commande`, `date_commande`, `fk_Client`, `f
 	(3, '2022-03-10', 2, 1),
 	(4, '2022-04-05', 4, 3);
 
+-- Listage de la structure de table didi. t_employer
+CREATE TABLE IF NOT EXISTS `t_employer` (
+  `ID_employer` int NOT NULL AUTO_INCREMENT,
+  `nom_employer` varchar(50) DEFAULT NULL,
+  `prenom_employer` varchar(50) DEFAULT NULL,
+  `fk_poste` int DEFAULT NULL,
+  `fk_salaire` int DEFAULT NULL,
+  PRIMARY KEY (`ID_employer`),
+  KEY `FK_t_employer_t_poste_employer` (`fk_salaire`),
+  KEY `FK_t_employer_t_poste_employer_2` (`fk_poste`),
+  CONSTRAINT `FK_t_employer_t_poste_employer` FOREIGN KEY (`fk_salaire`) REFERENCES `t_poste_employer` (`ID_poste_employer`),
+  CONSTRAINT `FK_t_employer_t_poste_employer_2` FOREIGN KEY (`fk_poste`) REFERENCES `t_poste_employer` (`ID_poste_employer`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table didi.t_employer : ~5 rows (environ)
+INSERT INTO `t_employer` (`ID_employer`, `nom_employer`, `prenom_employer`, `fk_poste`, `fk_salaire`) VALUES
+	(1, 'Gerard', 'dzpoloio', 3, 3),
+	(2, 'petit', 'ponet', 1, 1),
+	(3, 'luigi', 'didier', 2, 2),
+	(4, 'Mario', 'Kart', 4, 4),
+	(5, 'Yoshi', 'Naniii', 4, 4);
+
 -- Listage de la structure de table didi. t_endroit
 CREATE TABLE IF NOT EXISTS `t_endroit` (
   `ID_Endroit` int NOT NULL AUTO_INCREMENT,
@@ -157,6 +186,21 @@ INSERT INTO `t_payer_commande` (`ID_Paiement`, `date_paiement`, `montant`, `fk_C
 	(2, '2022-02-15', 15.00, 2, 2),
 	(3, '2022-03-10', 8.50, 3, 3),
 	(4, '2022-04-05', 12.75, 4, 4);
+
+-- Listage de la structure de table didi. t_poste_employer
+CREATE TABLE IF NOT EXISTS `t_poste_employer` (
+  `ID_poste_employer` int NOT NULL AUTO_INCREMENT,
+  `salaire` int DEFAULT NULL,
+  `poste` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`ID_poste_employer`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Listage des données de la table didi.t_poste_employer : ~4 rows (environ)
+INSERT INTO `t_poste_employer` (`ID_poste_employer`, `salaire`, `poste`) VALUES
+	(1, 4600, 'Serveur'),
+	(2, 5662, 'manager'),
+	(3, 8555, 'Directeur'),
+	(4, 5222, 'Cuissinier');
 
 -- Listage de la structure de table didi. t_produit
 CREATE TABLE IF NOT EXISTS `t_produit` (

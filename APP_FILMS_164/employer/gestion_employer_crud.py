@@ -28,14 +28,14 @@ from APP_FILMS_164.genres.gestion_genres_wtf_forms import FormWTFUpdateGenre
 """
 
 
-@app.route("/contact_afficher/<string:order_by>/<int:id_genre_sel>", methods=['GET', 'POST'])
-def contact_afficher(order_by, id_genre_sel):
+@app.route("/employer_afficher/<string:order_by>/<int:id_genre_sel>", methods=['GET', 'POST'])
+def employer_afficher(order_by, id_genre_sel):
     if request.method == "GET":
         try:
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and id_genre_sel == 0:
-                    strsql_genres_afficher = """SELECT * FROM t_client inner join t_commande_passer on t_client.ID_Client = t_commande_passer.ID_Commande"""
-                    mc_afficher.execute(strsql_contact_afficher)
+                    strsql_employer_afficher = """SELECT * FROM t_employer inner join t_poste_employer on t_employer.fk_poste = t_poste_employer.ID_poste_employer"""
+                    mc_afficher.execute(strsql_employer_afficher)
                 elif order_by == "ASC":
                     # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
                     # la commande MySql classique est "SELECT * FROM t_genre"
@@ -43,13 +43,13 @@ def contact_afficher(order_by, id_genre_sel):
                     # donc, je précise les champs à afficher
                     # Constitution d'un dictionnaire pour associer l'id du genre sélectionné avec un nom de variable
                     valeur_id_genre_selected_dictionnaire = {"value_id_genre_selected": id_genre_sel}
-                    strsql_genres_afficher = """SELECT *  FROM t_client WHERE ID_Client = %(value_id_genre_selected)s"""
+                    strsql_employer_afficher = """SELECT *  FROM t_client WHERE ID_Client = %(value_id_genre_selected)s"""
 
-                    mc_afficher.execute(strsql_contact_afficher, valeur_id_genre_selected_dictionnaire)
+                    mc_afficher.execute(strsql_employer_afficher, valeur_id_genre_selected_dictionnaire)
                 else:
-                    strsql_genres_afficher = """SELECT *  FROM t_client ORDER BY id_client DESC"""
+                    strsql_employer_afficher = """SELECT *  FROM t_client ORDER BY id_client DESC"""
 
-                    mc_afficher.execute(strsql_contact_afficher)
+                    mc_afficher.execute(strsql_employer_afficher)
 
                 data_genres = mc_afficher.fetchall()
 
@@ -66,13 +66,13 @@ def contact_afficher(order_by, id_genre_sel):
                     # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
                     flash(f"Données genres affichés !!", "success")
 
-        except Exception as Exception_contact_afficher:
+        except Exception as Exception_employer_afficher:
             raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
-                                          f"{contact_afficher.__name__} ; "
-                                          f"{Exception_contact_afficher}")
+                                          f"{employer_afficher.__name__} ; "
+                                          f"{Exception_employer_afficher}")
 
     # Envoie la page "HTML" au serveur.
-    return render_template("contact/contact_afficher.html", data=data_genres)
+    return render_template("employer/employer_afficher.html", data=data_genres)
 
 
 """
@@ -96,7 +96,7 @@ def contact_afficher(order_by, id_genre_sel):
 
 
 @app.route("/genres_ajouter", methods=['GET', 'POST'])
-def genres_ajouter_wtf():
+def employer_ajouter_wtf():
     form = FormWTFAjouterGenres()
     if request.method == "POST":
         try:
@@ -118,7 +118,7 @@ def genres_ajouter_wtf():
 
         except Exception as Exception_genres_ajouter_wtf:
             raise ExceptionGenresAjouterWtf(f"fichier : {Path(__file__).name}  ;  "
-                                            f"{genres_ajouter_wtf.__name__} ; "
+                                            f"{employer_ajouter_wtf.__name__} ; "
                                             f"{Exception_genres_ajouter_wtf}")
 
     return render_template("genres/genres_ajouter_wtf.html", form=form)
@@ -145,7 +145,7 @@ def genres_ajouter_wtf():
 
 
 @app.route("/genre_update", methods=['GET', 'POST'])
-def genre_update_wtf():
+def employer_update_wtf():
     # L'utilisateur vient de cliquer sur le bouton "EDIT". Récupère la valeur de "id_genre"
     id_genre_update = request.values['id_genre_btn_edit_html']
 
@@ -195,7 +195,7 @@ def genre_update_wtf():
 
     except Exception as Exception_genre_update_wtf:
         raise ExceptionGenreUpdateWtf(f"fichier : {Path(__file__).name}  ;  "
-                                      f"{genre_update_wtf.__name__} ; "
+                                      f"{employer_update_wtf.__name__} ; "
                                       f"{Exception_genre_update_wtf}")
 
     return render_template("genres/genre_update_wtf.html", form_update=form_update)
@@ -216,8 +216,8 @@ def genre_update_wtf():
 """
 
 
-@app.route("/genre_delete", methods=['GET', 'POST'])
-def genre_delete_wtf():
+@app.route("/employer_delete", methods=['GET', 'POST'])
+def employer_delete_wtf():
     data_films_attribue_genre_delete = None
     btn_submit_del = None
     # L'utilisateur vient de cliquer sur le bouton "DELETE". Récupère la valeur de "id_genre"
@@ -298,7 +298,7 @@ def genre_delete_wtf():
 
     except Exception as Exception_genre_delete_wtf:
         raise ExceptionGenreDeleteWtf(f"fichier : {Path(__file__).name}  ;  "
-                                      f"{genre_delete_wtf.__name__} ; "
+                                      f"{employer_delete_wtf.__name__} ; "
                                       f"{Exception_genre_delete_wtf}")
 
     return render_template("genres/genre_delete_wtf.html",

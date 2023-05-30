@@ -28,26 +28,25 @@ from APP_FILMS_164.genres.gestion_genres_wtf_forms import FormWTFUpdateGenre
 """
 
 
-@app.route("/genres_afficher/<string:order_by>/<int:id_genre_sel>", methods=['GET', 'POST'])
-def genres_afficher(order_by, id_genre_sel):
+@app.route("/stock_afficher/<string:order_by>/<int:id_genre_sel>", methods=['GET', 'POST'])
+def stock_afficher(order_by, id_genre_sel):
     if request.method == "GET":
         try:
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and id_genre_sel == 0:
-                    strsql_genres_afficher = """SELECT * FROM t_client INNER JOIN t_tel ON t_client.ID_Client = t_tel.ID_tel 
-                                                                   INNER JOIN t_mail ON t_client.ID_Client = t_mail.ID_Mail"""
-                    mc_afficher.execute(strsql_genres_afficher)
+                    strsql_stock_afficher = """SELECT * FROM t_produit INNER JOIN t_stocker_produit ON t_produit.ID_Produit = t_stocker_produit.ID_Stock"""
+                    mc_afficher.execute(strsql_stock_afficher)
 
 
                 elif order_by == "ASC":
 
-                    strsql_genres_afficher = """SELECT * FROM t_client INNER JOIN t_mail ON t_client.ID_Client = t_mail.ID_Mail"""
-                    mc_afficher.execute(strsql_genres_afficher)
+                    strsql_stock_afficher = """SELECT * FROM t_client INNER JOIN t_mail ON t_client.ID_Client = t_mail.ID_Mail"""
+                    mc_afficher.execute(strsql_stock_afficher)
 
                 else:
-                    strsql_genres_afficher = """SELECT *  FROM t_client ORDER BY id_client DESC"""
+                    strsql_stock_afficher = """SELECT *  FROM t_client ORDER BY id_client DESC"""
 
-                    mc_afficher.execute(strsql_genres_afficher)
+                    mc_afficher.execute(strsql_stock_afficher)
 
                 data_genres = mc_afficher.fetchall()
 
@@ -64,13 +63,13 @@ def genres_afficher(order_by, id_genre_sel):
                     # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
                     flash(f"Données genres affichés !!", "success")
 
-        except Exception as Exception_genres_afficher:
+        except Exception as Exception_stock_afficher:
             raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
-                                          f"{genres_afficher.__name__} ; "
-                                          f"{Exception_genres_afficher}")
+                                          f"{stock_afficher.__name__} ; "
+                                          f"{Exception_stock_afficher}")
 
     # Envoie la page "HTML" au serveur.
-    return render_template("genres/genres_afficher.html", data=data_genres)
+    return render_template("stock/stock_afficher.html", data=data_genres)
 
 
 """
@@ -113,8 +112,8 @@ def genres_afficher(order_by, id_genre_sel):
 """
 
 
-@app.route("/genres_ajouter", methods=['GET', 'POST'])
-def genres_ajouter_wtf():
+@app.route("/Stock_ajouter", methods=['GET', 'POST'])
+def stock_ajouter_wtf():
     form = FormWTFAjouterGenres()
     if request.method == "POST":
         try:
@@ -124,7 +123,7 @@ def genres_ajouter_wtf():
                 valeurs_insertion_dictionnaire = {"value_intitule_genre": name_genre}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_genre = """INSERT INTO t_client (ID_Client,Nom,Prenom,mot_de_passe) VALUES (NULL,%(value_intitule_genre)s) """
+                strsql_insert_genre = """INSERT INTO t_genre (id_genre,intitule_genre) VALUES (NULL,%(value_intitule_genre)s) """
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(strsql_insert_genre, valeurs_insertion_dictionnaire)
 
@@ -136,14 +135,14 @@ def genres_ajouter_wtf():
 
         except Exception as Exception_genres_ajouter_wtf:
             raise ExceptionGenresAjouterWtf(f"fichier : {Path(__file__).name}  ;  "
-                                            f"{genres_ajouter_wtf.__name__} ; "
+                                            f"{stock_ajouter_wtf.__name__} ; "
                                             f"{Exception_genres_ajouter_wtf}")
 
     return render_template("genres/genres_ajouter_wtf.html", form=form)
 
 
-@app.route("/genre_update", methods=['GET', 'POST'])
-def genre_update_wtf():
+@app.route("/Stock_update", methods=['GET', 'POST'])
+def stock_update_wtf():
     # L'utilisateur vient de cliquer sur le bouton "EDIT". Récupère la valeur de "id_genre"
     id_genre_update = request.values['id_genre_btn_edit_html']
 
@@ -193,7 +192,7 @@ def genre_update_wtf():
 
     except Exception as Exception_genre_update_wtf:
         raise ExceptionGenreUpdateWtf(f"fichier : {Path(__file__).name}  ;  "
-                                      f"{genre_update_wtf.__name__} ; "
+                                      f"{stock_update_wtf.__name__} ; "
                                       f"{Exception_genre_update_wtf}")
 
     return render_template("genres/genre_update_wtf.html", form_update=form_update)
@@ -214,8 +213,8 @@ def genre_update_wtf():
 """
 
 
-@app.route("/genre_delete", methods=['GET', 'POST'])
-def genre_delete_wtf():
+@app.route("/Stock_delete", methods=['GET', 'POST'])
+def stock_delete_wtf():
     data_films_attribue_genre_delete = None
     btn_submit_del = None
     # L'utilisateur vient de cliquer sur le bouton "DELETE". Récupère la valeur de "id_genre"
@@ -296,7 +295,7 @@ def genre_delete_wtf():
 
     except Exception as Exception_genre_delete_wtf:
         raise ExceptionGenreDeleteWtf(f"fichier : {Path(__file__).name}  ;  "
-                                      f"{genre_delete_wtf.__name__} ; "
+                                      f"{stock_delete_wtf.__name__} ; "
                                       f"{Exception_genre_delete_wtf}")
 
     return render_template("genres/genre_delete_wtf.html",
