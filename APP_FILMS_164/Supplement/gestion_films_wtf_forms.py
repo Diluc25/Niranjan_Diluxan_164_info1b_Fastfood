@@ -17,7 +17,7 @@ class FormWTFAddFilm(FlaskForm):
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
     nom_film_regexp = ""
-    nom_film_add_wtf = StringField("Nom du menu ", validators=[Length(min=2, max=2000, message="min 2 max 20"),
+    nom_film_add_wtf = StringField("Nom du film ", validators=[Length(min=2, max=2000, message="min 2 max 20"),
                                                                Regexp(nom_film_regexp,
                                                                       message="Pas de chiffres, de caractères "
                                                                               "spéciaux, "
@@ -25,7 +25,7 @@ class FormWTFAddFilm(FlaskForm):
                                                                               "apostrophe, de double trait union")
                                                                ])
 
-    submit = SubmitField("Enregistrer menu")
+    submit = SubmitField("Enregistrer film")
 
 
 class FormWTFUpdateFilm(FlaskForm):
@@ -35,7 +35,7 @@ class FormWTFUpdateFilm(FlaskForm):
     """
 
     nom_film_update_wtf = StringField("Clavioter le titre", widget=TextArea())
-    duree_film_update_wtf = IntegerField("Durée de la preparation (minutes)", validators=[NumberRange(min=1, max=5000,
+    duree_film_update_wtf = IntegerField("Durée du film (minutes)", validators=[NumberRange(min=1, max=5000,
                                                                                             message=u"Min %(min)d et "
                                                                                                     u"max %(max)d "
                                                                                                     u"Selon Wikipédia "
@@ -61,7 +61,7 @@ class FormWTFDeleteFilm(FlaskForm):
         submit_btn_conf_del : Bouton de confirmation pour effacer un "film".
         submit_btn_annuler : Bouton qui permet d'afficher la table "t_film".
     """
-    nom_film_delete_wtf = StringField("Effacer ce menu")
-    submit_btn_del_film = SubmitField("Effacer menu")
+    nom_film_delete_wtf = StringField("Effacer ce film")
+    submit_btn_del_film = SubmitField("Effacer film")
     submit_btn_conf_del_film = SubmitField("Etes-vous sur d'effacer ?")
     submit_btn_annuler = SubmitField("Annuler")

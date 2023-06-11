@@ -12,9 +12,9 @@ from flask import url_for
 from APP_FILMS_164 import app
 from APP_FILMS_164.database.database_tools import DBconnection
 from APP_FILMS_164.erreurs.exceptions import *
-from APP_FILMS_164.genres.gestion_genres_wtf_forms import FormWTFAjouterGenres
-from APP_FILMS_164.genres.gestion_genres_wtf_forms import FormWTFDeleteGenre
-from APP_FILMS_164.genres.gestion_genres_wtf_forms import FormWTFUpdateGenre
+from APP_FILMS_164.employer.gestion_employer_wtf_forms import FormWTFAjouterGenres
+from APP_FILMS_164.employer.gestion_employer_wtf_forms import FormWTFDeleteGenre
+from APP_FILMS_164.employer.gestion_employer_wtf_forms import FormWTFUpdateGenre
 
 """
     Auteur : OM 2021.03.16
@@ -34,7 +34,7 @@ def employer_afficher(order_by, id_genre_sel):
         try:
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and id_genre_sel == 0:
-                    strsql_employer_afficher = """SELECT * FROM t_employer inner join t_poste_employer on t_employer.fk_poste = t_poste_employer.ID_poste_employer"""
+                    strsql_employer_afficher = """SELECT * FROM t_employer inner join t_poste_employer on t_employer.fk_poste = t_poste_employer.ID_poste_employer ORDER BY id_employer ASC"""
                     mc_afficher.execute(strsql_employer_afficher)
                 elif order_by == "ASC":
                     # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
@@ -43,11 +43,11 @@ def employer_afficher(order_by, id_genre_sel):
                     # donc, je précise les champs à afficher
                     # Constitution d'un dictionnaire pour associer l'id du genre sélectionné avec un nom de variable
                     valeur_id_genre_selected_dictionnaire = {"value_id_genre_selected": id_genre_sel}
-                    strsql_employer_afficher = """SELECT *  FROM t_client WHERE ID_Client = %(value_id_genre_selected)s"""
+                    strsql_employer_afficher = """SELECT *  FROM t_employer WHERE ID_employer = %(value_id_genre_selected)s"""
 
                     mc_afficher.execute(strsql_employer_afficher, valeur_id_genre_selected_dictionnaire)
                 else:
-                    strsql_employer_afficher = """SELECT *  FROM t_client ORDER BY id_client DESC"""
+                    strsql_employer_afficher = """SELECT *  FROM t_employer ORDER BY ID_employer DESC"""
 
                     mc_afficher.execute(strsql_employer_afficher)
 
@@ -95,7 +95,7 @@ def employer_afficher(order_by, id_genre_sel):
 """
 
 
-@app.route("/genres_ajouter", methods=['GET', 'POST'])
+@app.route("/employer_ajouter", methods=['GET', 'POST'])
 def employer_ajouter_wtf():
     form = FormWTFAjouterGenres()
     if request.method == "POST":
@@ -103,10 +103,10 @@ def employer_ajouter_wtf():
             if form.validate_on_submit():
                 name_genre_wtf = form.nom_genre_wtf.data
                 name_genre = name_genre_wtf.lower()
-                valeurs_insertion_dictionnaire = {"value_intitule_genre": name_genre}
+                valeurs_insertion_dictionnaire = {"value_nom_employer": name_genre_wtf}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_genre = """INSERT INTO t_genre (id_genre,intitule_genre) VALUES (NULL,%(value_intitule_genre)s) """
+                strsql_insert_genre = """INSERT INTO t_employer (ID_employer,nom_employer) VALUES (NULL,%(value_nom_employer)s) """
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(strsql_insert_genre, valeurs_insertion_dictionnaire)
 
@@ -114,14 +114,14 @@ def employer_ajouter_wtf():
                 print(f"Données insérées !!")
 
                 # Pour afficher et constater l'insertion de la valeur, on affiche en ordre inverse. (DESC)
-                return redirect(url_for('genres_afficher', order_by='DESC', id_genre_sel=0))
+                return redirect(url_for('employer_afficher', order_by='DESC', id_genre_sel=0))
 
         except Exception as Exception_genres_ajouter_wtf:
             raise ExceptionGenresAjouterWtf(f"fichier : {Path(__file__).name}  ;  "
                                             f"{employer_ajouter_wtf.__name__} ; "
                                             f"{Exception_genres_ajouter_wtf}")
 
-    return render_template("genres/genres_ajouter_wtf.html", form=form)
+    return render_template("employer/employer_ajouter_wtf.html", form=form)
 
 
 """

@@ -51,9 +51,6 @@ try:
     from APP_FILMS_164.films import gestion_films_crud
     from APP_FILMS_164.films import gestion_films_wtf_forms
 
-    from APP_FILMS_164.menu import gestion_menu_crud
-    from APP_FILMS_164.menu import gestion_menu_wtf_forms
-
     from APP_FILMS_164.Stock import gestion_Stock_crud
     from APP_FILMS_164.Stock import gestion_Stock_wtf_forms
 
@@ -65,6 +62,9 @@ try:
 
     from APP_FILMS_164.employer import gestion_employer_crud
     from APP_FILMS_164.employer import gestion_employer_wtf_forms
+
+    from APP_FILMS_164.films import gestion_films_crud
+    from APP_FILMS_164.films import gestion_films_wtf_forms
 
 
 

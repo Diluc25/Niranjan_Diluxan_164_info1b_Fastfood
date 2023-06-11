@@ -5,7 +5,7 @@
 	<div class="row">
 		<div class="col-md-12">
 			<p>
-				Produit
+				Produit/Supplement
 			</p>
             <table class="table table-bordered table-sm">
             {% if data %}
@@ -18,10 +18,7 @@
                             Nom Produit
 						</th>
                         <th class="align-middle">
-							Prix Produit
-                        </th>
-						<th class="align-middle">
-							Description produit
+							Date ajouter
                         </th>
                         <th class="align-middle">
 							Ajouter
@@ -42,17 +39,15 @@
 				<tbody>
 					<tr>
 						<td class="align-middle">
-							{{ row.ID_Produit }}
+							{{ row.ID_supplement }}
 						</td>
 						<td class="align-middle">
-							{{ row.Nom_Produit }}
+							{{ row.intitule_genre }}
 						</td>
 						<td class="align-middle">
-							{{ row.Prix_Produit }}
+							{{ row.date_ins_supplement }}
 						</td>
-						<td class="align-middle">
-							{{ row.desc_Produit }}
-						</td>
+
 						<td class="text-right" class="align-middle">
 							<a class="btn btn-primary" href="{{ url_for('produit_ajouter_wtf') }}" role="button">Ajouter</a>
 						</td>

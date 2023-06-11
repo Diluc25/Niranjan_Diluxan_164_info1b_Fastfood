@@ -35,7 +35,7 @@ def produit_afficher(order_by, id_genre_sel):
         try:
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and id_genre_sel == 0:
-                    strsql_produit_afficher = """SELECT * FROM t_produit"""
+                    strsql_produit_afficher = """SELECT * FROM t_supplement"""
                     mc_afficher.execute(strsql_produit_afficher)
                 elif order_by == "ASC":
                     # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
@@ -44,11 +44,11 @@ def produit_afficher(order_by, id_genre_sel):
                     # donc, je précise les champs à afficher
                     # Constitution d'un dictionnaire pour associer l'id du genre sélectionné avec un nom de variable
                     valeur_id_genre_selected_dictionnaire = {"value_id_genre_selected": id_genre_sel}
-                    strsql_produit_afficher = """SELECT *  FROM t_client WHERE ID_Client = %(value_id_genre_selected)s"""
+                    strsql_produit_afficher = """SELECT *  FROM t_supplement WHERE ID_supplement = %(value_id_genre_selected)s"""
 
                     mc_afficher.execute(strsql_produit_afficher, valeur_id_genre_selected_dictionnaire)
                 else:
-                    strsql_produit_afficher = """SELECT *  FROM t_client ORDER BY id_client DESC"""
+                    strsql_produit_afficher = """SELECT *  FROM t_supplement ORDER BY ID_supplement DESC"""
 
                     mc_afficher.execute(strsql_produit_afficher)
 
@@ -102,24 +102,17 @@ def produit_ajouter_wtf():
     if request.method == "POST":
         try:
             if form.validate_on_submit():
-                print("bonjourrrrrr")
                 name_produit_wtf = form.nom_produit_wtf.data
                 name_desc_wtf = form.desc_produit_wtf.data
                 name_prix_wtf = form.prix_produit_wtf.data
-                print(name_produit_wtf)
-                print(name_produit_wtf)
-                print(name_produit_wtf)
-                print(name_produit_wtf)
-                print(name_produit_wtf)
-                print(name_produit_wtf)
-                print(name_produit_wtf)
-                print(name_produit_wtf)
-                valeurs_insertion_dictionnaire = {"value_intitule_genre": name_produit_wtf}
+                valeurs_insertion_dictionnaire = {"value_intitule_produit": name_produit_wtf,
+                                                  "value_intitule_desc": name_desc_wtf,
+                                                  "value_intitule_prix": name_prix_wtf}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_genre = f"""INSERT INTO t_produit (Nom_Produit, desc_Produit, Prix_Produit ) VALUES ({name_produit_wtf},{name_desc_wtf},{name_prix_wtf}) """
+                strsql_insert_genre = """INSERT INTO t_supplement (ID_supplement, intitule_genre, date_ins_supplement ) VALUES (NULL,%(value_intitule_produit)s,%(value_intitule_desc)s,%(value_intitule_prix)s) """
                 with DBconnection() as mconn_bd:
-                    #mconn_bd.execute(strsql_insert_genre, valeurs_insertion_dictionnaire)
+                    mconn_bd.execute(strsql_insert_genre, valeurs_insertion_dictionnaire)
                     mconn_bd.execute(strsql_insert_genre)
 
                 flash(f"Données insérées !!", "success")
